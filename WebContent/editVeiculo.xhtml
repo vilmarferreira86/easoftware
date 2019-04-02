@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+	<title>Sistema de Gerencia de Automoveis</title>
+	<link rel="stylesheet" type="text/css" href="css/estilo.css" />
+</h:head>
+<h:body>
+	<div id="geral">
+		<ui:include src="templates/header.xhtml" />
+
+		<ui:include src="templates/menu.xhtml" />
+
+		<DIV id="main">
+			<h:form id="form">
+				<p:panel header="Veículos">
+					<p:panelGrid columns="2" id="gridFormulario">
+						<p:outputLabel value="Modelo:" />
+						<p:selectOneMenu value="#{veiculoController.automovel.modelo}"
+							converter="convModelo">
+							<f:selectItem itemValue="" itemLabel="Selecione..."
+								noSelectionOption="true" />
+							<f:selectItems value="#{modeloController.todas}" var="m"
+								itemLabel="#{m.descricao}" itemValue="#{m}" />
+						</p:selectOneMenu>
+
+
+
+
+
+						<p:outputLabel value="Ano Fabricação:" />
+						<p:inputText id="anoFabricacao"
+							value="#{veiculoController.automovel.anoFabricacao}" />
+
+						<p:outputLabel value="Ano Modelo:" />
+						<p:inputText id="anoModelo"
+							value="#{veiculoController.automovel.anoModelo}" />
+
+						<p:outputLabel value="Observações:" />
+						<p:inputText id="observacoes"
+							value="#{veiculoController.automovel.observacoes}" />
+
+						<p:outputLabel value="Preço:" />
+						<p:inputText id="preco"
+							value="#{veiculoController.automovel.preco}" />
+
+						<p:outputLabel value="Kilometragem:" />
+						<p:inputText id="kilometragem"
+							value="#{veiculoController.automovel.kilometragem}" />
+
+
+
+					</p:panelGrid>
+					<p:commandButton value="Atualizar"
+						action="#{veiculoController.update}" ajax="false" />
+					<p:commandButton value="Cancelar"
+						action="#{veiculoController.cancela}" />
+				</p:panel>
+				<p:messages id="mensagem" autoUpdate="true" />
+
+
+			</h:form>
+		</DIV>
+		<ui:include src="templates/footer.xhtml" />
+	</div>
+
+
+</h:body>
+</html>

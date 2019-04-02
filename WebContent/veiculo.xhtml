@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+	<title>Sistema de Gerencia de Automoveis</title>
+	<link rel="stylesheet" type="text/css" href="css/estilo.css" />
+</h:head>
+<h:body>
+	<div id="geral">
+		<ui:include src="templates/header.xhtml" />
+
+		<ui:include src="templates/menu.xhtml" />
+
+		<DIV id="main">
+			<h:form id="form">
+				<p:panel header="Veículos">
+					<p:panelGrid columns="2" id="gridFormulario">
+						<p:outputLabel value="Modelo:" />
+						<p:selectOneMenu converter="convModelo"
+							value="#{veiculoController.automovel.modelo}">
+							<f:selectItem itemValue="" itemLabel="Selecione..."
+								noSelectionOption="true" />
+							<f:selectItems value="#{modeloController.todas}" var="m"
+								itemLabel="#{m.descricao}" itemValue="#{m}" />
+						</p:selectOneMenu>
+						
+				
+
+						
+
+						<p:outputLabel value="Ano Fabricação:" />
+						<p:inputText id="anoFabricacao"
+							value="#{veiculoController.automovel.anoFabricacao}" />
+
+						<p:outputLabel value="Ano Modelo:" />
+						<p:inputText id="anoModelo"
+							value="#{veiculoController.automovel.anoModelo}" />
+
+						<p:outputLabel value="Observações:" />
+						<p:inputText id="observacoes"
+							value="#{veiculoController.automovel.observacoes}" />
+
+						<p:outputLabel value="Preço:" />
+						<p:inputText id="preco"
+							value="#{veiculoController.automovel.preco}" />
+
+						<p:outputLabel value="Kilometragem:" />
+						<p:inputText id="kilometragem"
+							value="#{veiculoController.automovel.kilometragem}" />
+						
+						<p:outputLabel value="Imagem:"/>
+						<p:fileUpload value="#{veiculoController.automovel.foto}" mode="simple" skinSimple="true"/>
+						<p:commandButton value="Cadastrar"
+							actionListener="#{veiculoController.adicionar}"
+							update="gridFormulario, dataVeiculo" />
+
+					</p:panelGrid>
+				</p:panel>
+				<p:messages id="mensagem" autoUpdate="true" />
+				<br />
+				<p:dataTable id="dataVeiculo" value="#{veiculoController.todas}"
+					paginatorPosition="bottom" editable="true" var="v" border="1"
+					paginator="true" rows="10"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,50"
+					rowStyleClass="#{empty rowIx or rowIx mod 2 ne 0 ? 'even-row' : 'odd-row'}"
+					rowIndexVar="rowIx">
+					
+
+					<p:column headerText="Modelo">
+						<h:outputText value="#{v.modelo.descricao}" />
+					</p:column>
+					
+					<p:column headerText="Marca">
+						<h:outputText value="#{v.modelo.marca.nome}" />
+					</p:column>
+
+					<p:column headerText="Ano Modelo">
+						<h:outputText value="#{v.anoModelo}" />
+					</p:column>
+
+					<p:column headerText="Ano Fabricao">
+						<h:outputText value="#{v.anoFabricacao}" />
+					</p:column>
+
+					<p:column headerText="Potência">
+						<h:outputText value="#{v.modelo.potencia}" />
+					</p:column> 	
+
+					<p:column headerText="Kilometragem">
+						<h:outputText value="#{v.kilometragem}" />
+					</p:column>
+
+
+					<p:column width="10%" headerText="Operações">
+
+						<p:commandButton id="linkEdit" immediate="true"
+							alt="Editar Registro" title="Editar Registro"
+							icon="ui-icon-pencil" action="#{veiculoController.editar}">
+							<f:setPropertyActionListener value="#{v}"
+								target="#{veiculoController.automovel}" />
+						</p:commandButton>
+						|
+						<p:commandButton id="linkRemove" icon="ui-icon-trash"
+							immediate="true" alt="Remover Registro" title="Remover Registro"
+							action="#{veiculoController.remove}" update="dataVeiculo">
+							<f:setPropertyActionListener value="#{v}"
+								target="#{veiculoController.automovel}" />
+						</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+
+			</h:form>
+		</DIV>
+		<ui:include src="templates/footer.xhtml" />
+	</div>
+
+
+</h:body>
+</html>
