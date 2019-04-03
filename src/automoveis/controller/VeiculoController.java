@@ -1,5 +1,6 @@
 package automoveis.controller;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -11,34 +12,39 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 
+import org.primefaces.event.FileUploadEvent;
+
+import automoveis.dao.ModeloDao;
+import automoveis.dao.VeiculoDao;
 import automoveis.entidades.Automovel;
+import automoveis.entidades.Marca;
+import automoveis.entidades.Modelo;
 import automoveis.util.JpaUtil;
 
 @ManagedBean
 @SessionScoped
 public class VeiculoController {
 	private Automovel automovel = new Automovel();
-	
-	public VeiculoController() {}
-	
+	private VeiculoDao vDao = new VeiculoDao();
+	private Marca marca;
+	private List<Modelo> modelos;
+	private ModeloDao mdao = new ModeloDao();
+
+	public VeiculoController() {
+	}
+
 	public VeiculoController(Automovel auto) {
 		super();
 		this.automovel = auto;
-		
+
 	}
-	
+
 	public void adicionar() {
 		try {
-
-			EntityManager manager = JpaUtil.getEntityManager();
-			EntityTransaction transaction = manager.getTransaction();
-			transaction.begin();
-
-			manager.persist(automovel);
-			transaction.commit();
-			manager.close();
-
+			System.out.println("Foto->" + this.automovel.getFoto());
+			vDao.adicionar(this.automovel);
 			this.automovel = new Automovel();
+			this.marca = new Marca();
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "Veículo cadastrado com sucesso!", null));
 		}
@@ -53,14 +59,9 @@ public class VeiculoController {
 	// METODO UPDATE
 	public String update() {
 		try {
-			EntityManager manager = JpaUtil.getEntityManager();
-			EntityTransaction transaction = manager.getTransaction();
-			transaction.begin();
-
-			manager.merge(automovel);
-			transaction.commit();
-			manager.close();
+			vDao.update(this.automovel);
 			this.automovel = new Automovel();
+			this.marca = new Marca();
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "Veículo atualizado com sucesso!", null));
 
@@ -76,14 +77,9 @@ public class VeiculoController {
 	public String remove() {
 		try {
 
-			EntityManager manager = JpaUtil.getEntityManager();
-			EntityTransaction transaction = manager.getTransaction();
-			Object o = manager.merge(automovel);
-			transaction.begin();
-			manager.remove(o);
-			transaction.commit();
-			manager.close();
+			vDao.remove(this.automovel);
 			this.automovel = new Automovel();
+			this.marca = new Marca();
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "Veículo removido com sucesso!", null));
 		} catch (PersistenceException e) {
@@ -93,25 +89,39 @@ public class VeiculoController {
 
 		return "veiculo";
 	}
-	
+
 	public String editar() {
 		return "editVeiculo";
 	}
-	
+
 	public String cancela() {
 		this.automovel = new Automovel();
+		this.marca = new Marca();
 		return "veiculo";
 	}
 
 	public List<Automovel> getTodas() {
-		EntityManager manager = JpaUtil.getEntityManager();
+		List<Automovel> list = null;
 		try {
-			TypedQuery<Automovel> query = manager.createQuery("from Automovel", Automovel.class);
-			return query.getResultList();
-		} finally {
-			manager.close();
-		}
+			list = vDao.getTodas();
+		} catch (Exception e) {
 
+		}
+		return list;
+
+	}
+
+	@SuppressWarnings("unchecked")
+	public void updateComboModelo() {
+		HashMap<String, Object> params = new HashMap<>();
+		params.put("marca", marca.getId());
+		modelos = mdao.getModeloPorMarca(params);
+	}
+
+	public void upload(FileUploadEvent event) {
+		this.automovel.setFoto(event.getFile().getContents());
+		FacesMessage msg = new FacesMessage("Succesful", event.getFile().getFileName() + " is uploaded.");
+		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	public Automovel getAutomovel() {
@@ -121,7 +131,37 @@ public class VeiculoController {
 	public void setAutomovel(Automovel automovel) {
 		this.automovel = automovel;
 	}
-	
-	
+
+	public VeiculoDao getvDao() {
+		return vDao;
+	}
+
+	public void setvDao(VeiculoDao vDao) {
+		this.vDao = vDao;
+	}
+
+	public Marca getMarca() {
+		return marca;
+	}
+
+	public void setMarca(Marca marca) {
+		this.marca = marca;
+	}
+
+	public List<Modelo> getModelos() {
+		return modelos;
+	}
+
+	public void setModelos(List<Modelo> modelos) {
+		this.modelos = modelos;
+	}
+
+	public ModeloDao getMdao() {
+		return mdao;
+	}
+
+	public void setMdao(ModeloDao mdao) {
+		this.mdao = mdao;
+	}
 
 }
